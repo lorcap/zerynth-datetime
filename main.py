@@ -13,6 +13,9 @@ try:
     timedelta     = datetimelib.timedelta
     timezone      = datetimelib.timezone
     datetime      = datetimelib.datetime
+    date          = datetime
+    time          = timedelta
+    combine       = datetimelib.combine
     fromisoformat = datetimelib.fromisoformat
     fromordinal   = datetimelib.fromordinal
 
@@ -41,7 +44,14 @@ except:
         def bool    (self       ): return self._ctor(self.__bool__           )
 
         def __str__(self):
-            return "%s%dd %02d:%02d:%02d" % self.tuple()
+            return self.isoformat()
+
+        def isoformat(self):
+            t = self.tuple()
+            if 0 <= self.total_seconds() < 86400:
+                return "%02d:%02d:%02d" % t[2:]
+            else:
+                return "%s%dd %02d:%02d:%02d" % t
 
         def total_seconds(self):
             return round(super().total_seconds())
@@ -93,6 +103,9 @@ except:
 
     timezone.utc = timezone(timedelta(0))
 
+    date = datetimelib.date
+    time = datetimelib.time
+
     class datetime(datetimelib.datetime):
         add = datetimelib.datetime.__add__
         sub = datetimelib.datetime.__sub__
@@ -101,6 +114,12 @@ except:
         eq  = datetimelib.datetime.__eq__
         ge  = datetimelib.datetime.__ge__
         gt  = datetimelib.datetime.__gt__
+
+        def date(self):
+            return self.combine(super().date(), datetimelib.time(), self.tzinfo)
+
+        def time(self):
+            return timedelta(hours=self.hour, minutes=self.minute, seconds=self.second)
 
         def dateisoformat(self):
             return self.isoformat()[:10]
@@ -114,9 +133,15 @@ except:
                    super().tzinfo
 
         @classmethod
+        def combine(cls, date, time, tzinfo=True):
+            return super().combine(date, time) if tzinfo is True\
+              else super().combine(date, time, tzinfo)
+
+        @classmethod
         def fromisoformat(cls, s):
             return super().fromisoformat(s)
 
+    combine       = datetime.combine
     fromisoformat = datetime.fromisoformat
     fromordinal   = datetime.fromordinal
 
@@ -224,7 +249,7 @@ try:
     test('truediv(float)', td2.truediv(2.4).total_seconds(), 42)
 
     test('floordiv(timedelta)', td2.floordiv(td1), 2)
-    test('floordiv(int)', td1.floordiv(2), '0d 00:00:25')
+    test('floordiv(int)', td1.floordiv(2), '00:00:25')
 
     td1 = td1.sub(timedelta(seconds=10))
     test('mod(timedelta)', td2.mod(td1).total_seconds(), 20)
@@ -272,11 +297,11 @@ try:
 
     tz2 = cet()
     test('__init__()', tz2, 'CET')
-    test('utcoffset(None )', tz2.utcoffset(None                      ), '0d 01:00:00')
-    test('utcoffset( 3-27)', tz2.utcoffset(datetime(2010,  3, 27, 12)), '0d 01:00:00')
-    test('utcoffset( 3-28)', tz2.utcoffset(datetime(2010,  3, 28, 12)), '0d 02:00:00')
-    test('utcoffset(10-30)', tz2.utcoffset(datetime(2010, 10, 30, 12)), '0d 02:00:00')
-    test('utcoffset(10-31)', tz2.utcoffset(datetime(2010, 10, 31, 12)), '0d 01:00:00')
+    test('utcoffset(None )', tz2.utcoffset(None                      ), '01:00:00')
+    test('utcoffset( 3-27)', tz2.utcoffset(datetime(2010,  3, 27, 12)), '01:00:00')
+    test('utcoffset( 3-28)', tz2.utcoffset(datetime(2010,  3, 28, 12)), '02:00:00')
+    test('utcoffset(10-30)', tz2.utcoffset(datetime(2010, 10, 30, 12)), '02:00:00')
+    test('utcoffset(10-31)', tz2.utcoffset(datetime(2010, 10, 31, 12)), '01:00:00')
 
     ###################################################################
 
@@ -293,8 +318,11 @@ try:
 
     dt1 = datetime(1975, 8, 10, 0, 30, tzinfo=tz1)
     test('__init__()', dt1, '1975-08-10 00:30:00-01:00')
+    test('date()', dt1.date(), '1975-08-10 00:00:00-01:00')
+    test('time()', dt1.time().isoformat(), '00:30:00')
     test('astimezone()', dt1.astimezone(timezone.utc), '1975-08-10 01:30:00+00:00')
 
+    test('combine()', combine(date(1980, 8, 13), time(8, 20)), '1980-08-13 08:20:00')
     test('toordinal()', dt1.toordinal(), 721210)
     test('fromordinal()', fromordinal(1234567), '3381-02-16 00:00:00')
 
