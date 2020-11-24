@@ -654,6 +654,10 @@ Examples of working with :class:`datetime` objects::
 
 """
 
+#-if 0
+import builtins as __builtins__
+#-endif
+
 # The following functions were (stolen and) adapted from Python's datetime.
 def _is_leap(year):
     return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
