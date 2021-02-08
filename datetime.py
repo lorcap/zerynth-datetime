@@ -851,8 +851,7 @@ class datetime:
             days -= 1
             time = time.add(timedelta(days=-days))
         year, month, day, hour, minute, second, tz\
-                = self._tuple(self._ord, time, self._tz)[:7]
-        day += days
+                = self._tuple(self._ord + days, time, self._tz)[:7]
         return datetime(year, month, day, hour, minute, second, tz)
 
     def sub(self, other):

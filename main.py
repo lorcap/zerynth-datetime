@@ -333,6 +333,7 @@ try:
     test('fromisoformat(Y-M-D h:m:s+h:m)', fromisoformat('1975-08-10 23:30:12+01:00'), '1975-08-10 23:30:12+01:00')
 
     test('add()', dt1.add(datetimelib.timedelta(minutes=5)), '1975-08-10 00:35:00-01:00')
+    test('add()', dt1.add(datetimelib.timedelta(days=366)) , '1976-08-10 00:30:00-01:00')
     test('sub()', dt1.sub(datetimelib.timedelta(minutes=5)), '1975-08-10 00:25:00-01:00')
 
     dt2 = datetime(1975, 8, 10, 0, 30, tzinfo=tz2)
