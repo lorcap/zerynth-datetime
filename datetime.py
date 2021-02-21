@@ -41,14 +41,6 @@ are mimicked with a class :class:`datetime` set to midnight, and a class
 :class:`timedelta` in the range [0-24h).
 
 
-.. attention:: This module relays on the availability of ``divmod()`` and
-   ``round()`` as Zerynth's builtins. Currently, there are two pull requests
-   for them:
-
-   * `core-zerynth-stdlib#3 <https://github.com/zerynth/core-zerynth-stdlib/pull/3>`_
-   * `core-zerynth-stdlib#4 <https://github.com/zerynth/core-zerynth-stdlib/pull/4>`_
-
-
 timedelta Objects
 =================
 

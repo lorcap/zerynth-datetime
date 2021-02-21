@@ -7,7 +7,4 @@ It represents a minimalistic implementation of Python module
 [Zerynth](https://www.zerynth.com/) platform.
 
 This module relays on the availability of `divmod()` and `round()` as
-Zerynth's builtins. Currently, there are two pull requests for them:
-
-* [core-zerynth-stdlib#3](https://github.com/zerynth/core-zerynth-stdlib/pull/3)
-* [core-zerynth-stdlib#4](https://github.com/zerynth/core-zerynth-stdlib/pull/4)
+builtins (since Zerynth 2.6.1).
